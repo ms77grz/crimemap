@@ -7,7 +7,7 @@ connection = pymysql.connect(
 
 try:
     with connection.cursor() as cursor:
-        sql = "CREATE DATABASE IF NOT EXISTS crimemap"
+        sql = "CREATE DATABASE IF NOT EXISTS crimemap;"
         cursor.execute(sql)
         sql = """CREATE TABLE IF NOT EXISTS crimemap.crimes (
             id int NOT NULL AUTO_INCREMENT,
@@ -18,7 +18,7 @@ try:
             description VARCHAR(1000),
             update_at TIMESTAMP,
             PRIMARY KEY (id)
-        )"""
+        );"""
         cursor.execute(sql)
     connection.commit()
 finally:
