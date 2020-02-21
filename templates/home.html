@@ -5,6 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link type="text/css" rel="stylesheet" href="{{url_for('static', filename='css/style.css')}}"
     <title>Crime Map</title>
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.6.0/dist/leaflet.css"
         integrity="sha512-xwE/Az9zrjBIphAcBb3F6JVqxf46+CDLwfLMHloNu6KEQCAWi6HcDUbeOfBIptF7tcCzusKFjFw2yuvEpDL9wQ=="
@@ -16,7 +17,30 @@
 </head>
 
 <body onload="initialize()">
-    <div id="mapid" style="width: 80%; height: 500px;"></div>
+    <h1>Crime Map</h1>
+    <p>A map of recent criminal activities in the Grozny area.</p>
+    <div id="map-canvas"></div>
+    
+    <div id="newcrimeform">
+        <h2>Submit new crime</h2>
+
+        <form action="/submitcrime" method="post">
+            <label for="category">Category</label>
+            <select name="category" id="category">
+                <option value="mugging">Mugging</option>
+                <option value="breaking">Break-in</option>
+            </select>
+            <label for="date">Date</label>
+            <input type="date" name="date" id="date">
+            <label for="latitude">Latitude</label>
+            <input type="text" name="latitude" id="latitude">
+            <label for="longitude">Longitude</label>
+            <input type="text" name="longitude" id="longitude">
+            <label for="description">Description</label>
+            <textarea name="description" id="description" placeholder="A brief but detailed description of the crime"></textarea>
+            <input type="submit" value="Submit">
+        </form>
+    </div>
 
     <script>
         var map;
@@ -24,7 +48,7 @@
 
         function initialize() {
 
-            map = L.map('mapid').setView([43.3068, 45.6239], 12);
+            map = L.map('map-canvas').setView([43.3068, 45.6239], 12);
             L.tileLayer('https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token=pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpejY4NXVycTA2emYycXBndHRqcmZ3N3gifQ.rJcFIG214AriISLbB6B5aw', {
                 maxZoom: 18,
                 attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, ' +
@@ -39,8 +63,10 @@
                 if (marker) {
                     marker.setLatLng(e.latlng);
                 } else {
-                    marker = L.marker(e.latlng, {draggable: true}).addTo(map);
+                    marker = L.marker(e.latlng).addTo(map);
                 }
+                document.getElementById('latitude').value = marker.getLatLng().lat;
+                document.getElementById('longitude').value = marker.getLatLng().lng;
             }
     
             map.on('click', placeMarker);
