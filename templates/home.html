@@ -20,7 +20,7 @@
     <h1>Crime Map</h1>
     <p>A map of recent criminal activities in the Grozny area.</p>
     <div id="map-canvas"></div>
-    
+
     <div id="newcrimeform">
         <h2>Submit new crime</h2>
 
@@ -37,7 +37,8 @@
             <label for="longitude">Longitude</label>
             <input type="text" name="longitude" id="longitude">
             <label for="description">Description</label>
-            <textarea name="description" id="description" placeholder="A brief but detailed description of the crime"></textarea>
+            <textarea name="description" id="description"
+                placeholder="A brief but detailed description of the crime"></textarea>
             <input type="submit" value="Submit">
         </form>
     </div>
@@ -58,20 +59,32 @@
                 tileSize: 512,
                 zoomOffset: -1
             }).addTo(map);
-    
-            function placeMarker(e) {
-                if (marker) {
-                    marker.setLatLng(e.latlng);
-                } else {
-                    marker = L.marker(e.latlng).addTo(map);
-                }
-                document.getElementById('latitude').value = marker.getLatLng().lat;
-                document.getElementById('longitude').value = marker.getLatLng().lng;
-            }
-    
+            
             map.on('click', placeMarker);
+            placeCrimes({{ crimes | safe}});
+        }
+
+        function placeMarker(e) {
+            if (marker) {
+                marker.setLatLng(e.latlng);
+            } else {
+                marker = L.marker(e.latlng).addTo(map);
+            }
+            document.getElementById('latitude').value = marker.getLatLng().lat;
+            document.getElementById('longitude').value = marker.getLatLng().lng;
+        }
+
+        function placeCrimes(crimes) {
+            for (i = 0; i < crimes.length; i++) {
+                crime = L.marker([crimes[i].latitude, crimes[i].longitude]).addTo(map)
+                    .bindTooltip(
+                        "<b>" + crimes[i].date + "</b><br>" +
+                        crimes[i].category + "<br>" +
+                        crimes[i].description);
+            }
         }
     </script>
+    <br>
 </body>
 
 </html>
