@@ -24,18 +24,31 @@
     <div id="newcrimeform">
         <h2>Submit new crime</h2>
 
+        {% with messages = get_flashed_messages() %}
+            {% if messages %}
+                {% for message in messages %}
+                    <div id="error"><p>{{message}}</p></div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
         <form action="/submitcrime" method="post">
+
             <label for="category">Category</label>
             <select name="category" id="category">
-                <option value="mugging">Mugging</option>
-                <option value="breaking">Break-in</option>
+                {% for category in categories %}
+                <option value="{{category}}">{{category}}</option>
+                {% endfor %}
             </select>
+            
             <label for="date">Date</label>
             <input type="date" name="date" id="date">
+
             <label for="latitude">Latitude</label>
-            <input type="text" name="latitude" id="latitude">
+            <input type="text" name="latitude" id="latitude" readonly>
             <label for="longitude">Longitude</label>
-            <input type="text" name="longitude" id="longitude">
+            <input type="text" name="longitude" id="longitude" readonly>
+
             <label for="description">Description</label>
             <textarea name="description" id="description"
                 placeholder="A brief but detailed description of the crime"></textarea>
@@ -59,7 +72,7 @@
                 tileSize: 512,
                 zoomOffset: -1
             }).addTo(map);
-            
+
             map.on('click', placeMarker);
             placeCrimes({{ crimes | safe}});
         }
